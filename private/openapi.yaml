@@ -1,0 +1,41 @@
+openapi: 3.0.0
+info:
+  title: Links API
+  version: 1.0.0
+  description: API for managing links in the Meteor application
+paths:
+  /links:
+    get:
+      summary: Get all links
+      operationId: getLinks
+      responses:
+        '200':
+          description: A list of links
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Link'
+        '400':
+          description: Bad request, query parameter is required
+        '500':
+          description: Internal server error
+components:
+  schemas:
+    Link:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: The unique identifier for the link
+        title:
+          type: string
+          description: The title of the link
+        url:
+          type: string
+          description: The URL of the link
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time when the link was created

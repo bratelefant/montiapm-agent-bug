@@ -1,15 +1,30 @@
 import { Meteor } from "meteor/meteor";
 import { LinksCollection } from "/imports/api/links";
 import { WebApp } from "meteor/webapp";
-import express from "express";
+// import express from "express";
+import * as OpenApiValidator from "express-openapi-validator";
 
 export async function insertLink({ title, url }) {
   await LinksCollection.insertAsync({ title, url, createdAt: new Date() });
 }
 
-const app = express();
 
-WebApp.connectHandlers.use(app);
+// const app = express();
+// WebApp.connectHandlers.use(app);
+
+// USing WebApp.handlers instead of express
+const app = WebApp.handlers;
+
+
+// Calling OpenAPI Validator middleware fails to run, handler.call is not a function
+// This disappears if you comment out the montiapm:agent package
+app.use(
+  OpenApiValidator.middleware({
+    apiSpec: Assets.absoluteFilePath("openapi.yaml"),
+    validateRequests: true,
+    validateResponses: true,
+  })
+);
 
 // If the Links collection is empty, add some data.
 if ((await LinksCollection.find().countAsync()) === 0) {
